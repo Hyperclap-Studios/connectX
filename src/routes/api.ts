@@ -1,11 +1,11 @@
 import {Router} from "express";
-import user from "./api/user";
+import users from "./api/users";
 
 
 const api = Router();
 
 
-api.use('/user', user);
+api.use('/users', users);
 
 
 export default api;

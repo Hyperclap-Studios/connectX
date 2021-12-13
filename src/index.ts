@@ -8,6 +8,7 @@ import api from "./routes/api";
 import logger from "./middleware/express/logger";
 import authentication from "./middleware/socket.io/authentication";
 import users from "./instances/users";
+import Game from "./classes/Game";
 
 
 // Load Environment Variables
@@ -22,6 +23,8 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
+
+new Game('test');
 
 
 // Middleware And Routes

@@ -1,15 +1,4 @@
 
-type TCellState = string | null;
-type TCellColor = '' | 'red' | 'blue' | 'green' | 'yellow' | 'purple' | 'orange';
-
-interface ICell {
-    x: number,
-    y: number,
-    state: TCellState,
-    color: TCellColor,
-    connected: boolean,
-}
-
 class Board {
 
     public grid: ICell[][];
@@ -72,6 +61,24 @@ class Board {
         });
     }
 
+    public getCell(x: number, y: number): ICell {
+        return this.grid[y][x];
+    }
+
+    public move(cell: ICell, dx: number, dy: number): void {
+        if (cell.x + dx < 0 || cell.x + dx >= this.width || cell.y + dy < 0 || cell.y + dy >= this.height) return;
+        const _cell = this.grid[cell.y + dy][cell.x + dx];
+        if (_cell.state !== null) return;
+        _cell.state = cell.state;
+        _cell.color = cell.color;
+        _cell.connected = cell.connected;
+        const oldCell = this.grid[cell.y][cell.x];
+        oldCell.state = null;
+        oldCell.color = '';
+        oldCell.connected = false;
+        return this.move(_cell, dx, dy);
+    }
+
     public initGrid() {
         for (let y = 0; y < this.height; y++) {
             this.grid[y] = [];
@@ -92,4 +99,3 @@ class Board {
 
 
 export default Board;
-export {ICell, TCellState, TCellColor};

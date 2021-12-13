@@ -1,15 +1,10 @@
 import {generateUUID} from "../lib/helpers";
 
-
-interface IUserGameData {
-    hasTurn: boolean,
-}
-
-
 class User {
 
     public uuid: string;
     public username: string;
+    public color: TUserColor;
     public lastPing: number;
     public socketId: string;
     public gameData: IUserGameData;
@@ -17,6 +12,7 @@ class User {
     constructor(username: string) {
 
         this.username = username;
+        this.color = '';
         this.lastPing = Date.now();
         this.uuid = generateUUID();
         this.socketId = '';

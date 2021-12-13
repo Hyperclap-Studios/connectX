@@ -2,13 +2,13 @@ import {Router} from "express";
 import {sign} from "jsonwebtoken";
 import User from "../../classes/User";
 import {body, validationResult} from 'express-validator';
-import users from "../../instances/users";
+import usersInstance from "../../instances/users";
 
 
-const user = Router();
+const users = Router();
 
 
-user.post('/',
+users.post('/',
 
     body('username')
         .isLength({min: 3, max: 16}).withMessage('Username must be between 3 and 16 characters long.')
@@ -26,7 +26,7 @@ user.post('/',
 
         if (process.env.JWT_SECRET) {
             const user = new User(req.body.username);
-            users.addUser(user);
+            usersInstance.addUser(user);
 
             const token = sign({
 
@@ -49,11 +49,11 @@ user.post('/',
     }
 );
 
-user.get('/', (_req, res) => {
+users.get('/', (_req, res) => {
    res.json({
        success: true,
-       users: users.users,
+       users: usersInstance.users,
    });
 });
 
-export default user;
+export default users;
