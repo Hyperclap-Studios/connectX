@@ -20,3 +20,19 @@ interface IGameConfig {
     password?: string,
     powerUps?: boolean,
 }
+
+interface IUserPingPayload {
+    msg?: 'pong',
+}
+
+interface ILobbyConfig {
+    maxPlayers: number,
+    hasPassword: boolean,
+}
+
+interface ILobby {
+    name: string,
+    uuid: string,
+    playerCount: number,
+    config: ILobbyConfig,
+}

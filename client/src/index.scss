@@ -5,7 +5,13 @@
   --c-text: #f0f0f0;
   --c-bg: #000;
 
+  --c-red: #d1103a;
+
+  --c-border: #333;
+
   --c-modal-bg: #333;
+
+  --mw-container: 800px;
 
   --br: .5rem;
   --br-modal: var(--br);
@@ -21,6 +27,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  background: var(--c-bg);
+  color: var(--c-text);
+
+  font-size: 16px;
+
+  @media (min-width: 1200px) {
+    font-size: 24px;
+  }
 }
 
 code {
@@ -32,4 +47,124 @@ code {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+h1 {
+  margin-bottom: 4rem;
+}
+
+h2 {
+  margin-bottom: 3rem;
+}
+
+h3 {
+  margin-bottom: 2rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  input {
+    width: 100%;
+  }
+
+  label {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .error {
+    transition: all var(--tms) ease-in-out;
+  }
+
+  .error:not(:empty) {
+    margin-top: 2rem;
+  }
+}
+
+input {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid var(--c-border);
+  font-size: inherit;
+  font-family: inherit;
+  background: none;
+  padding: .5rem 0 .5rem 0;
+  color: inherit;
+  transition: border-color var(--tms) ease-in-out;
+
+
+  &:focus {
+    border-color: var(--c-pri);
+  }
+}
+
+label {
+  position: relative;
+
+  &:focus-within {
+    span {
+      font-size: .75rem;
+      transform: translateY(-75%);
+    }
+  }
+
+  span.focus {
+    font-size: .75rem;
+    transform: translateY(-75%);
+  }
+
+  span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(50%);
+    color: #aaa;
+    transition: all var(--tms) ease-in-out;
+  }
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  outline: none;
+  color: inherit;
+  border-radius: .5rem;
+  padding: .5rem 1rem;
+  border: 2px solid var(--c-border);
+  transition: all var(--tms) ease-in-out;
+
+  &.marginBottom {
+    margin-bottom: 2rem;
+  }
+
+  &:hover, &:focus, &.ready {
+    background-color: var(--c-pri);
+    border-color: var(--c-pri);
+    cursor: pointer;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: #aaa;
+}
+
+.error {
+  color: var(--c-red);
+}
+
+.screen {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

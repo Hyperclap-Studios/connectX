@@ -7,6 +7,7 @@ import logger from "../middleware/express/logger";
 import api from "../routes/api";
 import authentication from "../middleware/socket.io/authentication";
 import connectionHandler from "../handlers/socket.io/connection";
+import { join } from 'path';
 
 const app = express();
 const server = createServer(app);
@@ -14,6 +15,7 @@ const io = new Server(server);
 
 // Middleware And Routes
 app.use(cors())
+app.use('/', express.static(join(__dirname, '..', '..', 'client', 'build')));
 app.use(bodyParser.json());
 app.use(logger);
 app.use('/api', api);

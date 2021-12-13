@@ -25,6 +25,20 @@ class Games {
         return this.games.find(game => game.uuid === uuid) ?? null;
     }
 
+    public getLobbies(): any {
+        return this.games.map(game => {
+            return {
+                name: game.name,
+                uuid: game.uuid,
+                playerCount: game.players.playerCount,
+                config: {
+                    maxPlayers: game.config.maxPlayers,
+                    hasPassword: game.config.password !== '',
+                }
+            }
+        });
+    }
+
     public checkPlayersAlive(): void {
         this.games.forEach(game => {
             game.checkPlayersAlive();

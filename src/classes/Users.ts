@@ -44,6 +44,10 @@ class Users {
         });
     }
 
+    get playerCount() {
+        return this.users.length;
+    }
+
 }
 
 

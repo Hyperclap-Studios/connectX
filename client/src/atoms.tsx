@@ -10,4 +10,14 @@ const modalState  = atom<IModalState>({
     }
 });
 
-export { modalState };
+const tokenState = atom<string>({
+    key: 'tokenState',
+    default: localStorage.getItem('token') ?? '',
+});
+
+const lobbiesState = atom<ILobby[]>({
+    key: 'lobbiesState',
+    default: [],
+});
+
+export { modalState, tokenState, lobbiesState };

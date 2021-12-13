@@ -1,6 +1,7 @@
 import {config} from 'dotenv';
 import users from "./instances/users";
 import {server} from './instances/server';
+import {pingUsers} from "./functions/emitters";
 
 
 // Load Environment Variables
@@ -19,7 +20,7 @@ server.listen(PORT, () => {
 
 // Check Lifecycles
 setInterval(() => {
+    pingUsers();
 
     users.checkAlive();
-
 }, 1000);
