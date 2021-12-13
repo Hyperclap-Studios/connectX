@@ -1,0 +1,36 @@
+{
+  "name": "connectx",
+  "version": "0.0.1",
+  "description": "Connect X",
+  "main": "dist/index.js",
+  "author": "Hyperclap Studios",
+  "license": "MIT",
+  "scripts": {
+    "start": "node dist/index.js",
+    "postinstall": "tsc",
+    "dev": "nodemon --config nodemon.json src/index.ts",
+    "dev:debug": "nodemon --config nodemon.json --inspect-brk src/index.ts",
+    "gen:key": "node -e \"console.log(require('crypto').randomBytes(256).toString('base64'));\""
+  },
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "socket.io": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/cors": "^2.8.12",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.6",
+    "@types/node": "^16.11.12",
+    "@types/socket.io": "^3.0.2",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0",
+    "tsc": "^2.0.3",
+    "typescript": "^4.5.3"
+  }
+}
