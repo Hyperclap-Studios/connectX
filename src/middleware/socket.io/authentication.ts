@@ -1,7 +1,8 @@
+import { Socket } from 'socket.io';
 import {verify} from "jsonwebtoken";
 
 
-const authentication = (socket: any, next: any) => {
+const authentication = (socket: Socket, next: any) => {
 
     const token = socket.handshake.auth.token; // JWT
 
@@ -11,7 +12,7 @@ const authentication = (socket: any, next: any) => {
 
         if (payload) {
 
-            socket.data = payload;
+            socket.data.user = payload;
 
             next();
 

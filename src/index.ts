@@ -1,7 +1,7 @@
 import {config} from 'dotenv';
 import users from "./instances/users";
-import {io, server} from './instances/server';
-import Game from "./classes/Game";
+import {server} from './instances/server';
+
 
 // Load Environment Variables
 config();
@@ -9,21 +9,6 @@ config();
 
 // Variables
 const PORT = process.env.PORT || 8080;
-
-
-// Initialisation
-new Game('test');
-
-
-io.on('connection', (socket) => {
-    console.log('Client connected.');
-
-    socket.on('disconnect', () => {
-
-        console.log('Client disconnected.');
-
-    });
-});
 
 
 // Listen

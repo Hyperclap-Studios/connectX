@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import logger from "../middleware/express/logger";
 import api from "../routes/api";
 import authentication from "../middleware/socket.io/authentication";
+import connectionHandler from "../handlers/socket.io/connection";
 
 const app = express();
 const server = createServer(app);
@@ -19,5 +20,8 @@ app.use('/api', api);
 
 // Verify JWT
 io.use(authentication);
+
+// Websocket
+io.on('connection', connectionHandler);
 
 export {app, server, io};
