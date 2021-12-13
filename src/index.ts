@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import api from "./routes/api";
 import logger from "./middleware/express/logger";
 import authentication from "./middleware/socket.io/authentication";
+import users from "./instances/users";
 
 
 // Load Environment Variables
@@ -50,3 +51,11 @@ io.on('connection', (socket) => {
 server.listen(PORT, () => {
     console.log(`Server started listening on port ${PORT}.`);
 });
+
+
+// Check Lifecycles
+setInterval(() => {
+
+    users.checkAlive();
+
+}, 1000);

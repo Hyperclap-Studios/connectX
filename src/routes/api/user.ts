@@ -1,7 +1,8 @@
 import {Router} from "express";
 import {sign} from "jsonwebtoken";
 import User from "../../classes/User";
-import { body, validationResult } from 'express-validator';
+import {body, validationResult} from 'express-validator';
+import users from "../../instances/users";
 
 
 const user = Router();
@@ -14,50 +15,45 @@ user.post('/',
         .trim().escape(),
 
     (req, res) => {
+        const errors = validationResult(req);
 
-    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                errors: errors.mapped(),
+            });
+        }
 
-    if (!errors.isEmpty()) {
+        if (process.env.JWT_SECRET) {
+            const user = new User(req.body.username);
+            users.addUser(user);
 
-        return res.status(400).json({
+            const token = sign({
 
-            success: false,
-            errors: errors.mapped(),
+                username: user.username,
+                uuid: user.uuid,
+                lastPing: user.lastPing,
 
-        });
+            }, process.env.JWT_SECRET);
 
+            return res.json({
+                success: true,
+                token,
+            });
+        } else {
+            return res.json({
+                success: false,
+                error: 'JWT_SECRET not set.',
+            });
+        }
     }
+);
 
-    if (process.env.JWT_SECRET) {
-
-        const user = new User(req.body.username);
-
-        const token = sign({
-
-            username: user.username,
-            uuid: user.uuid,
-            lastPing: user.lastPing,
-
-        }, process.env.JWT_SECRET);
-
-        return res.json({
-
-            success: true,
-            token,
-
-        });
-
-    } else {
-
-        return res.json({
-
-            success: false,
-            error: 'JWT_SECRET not set.',
-
-        });
-
-    }
-
+user.get('/', (_req, res) => {
+   res.json({
+       success: true,
+       users: users.users,
+   });
 });
 
 export default user;

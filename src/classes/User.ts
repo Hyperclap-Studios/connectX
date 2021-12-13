@@ -26,6 +26,10 @@ class User {
 
     }
 
+    public isAlive(): boolean {
+        return Date.now() - this.lastPing < (parseInt(<string>process.env.PLAYER_TIMEOUT) || 10) * 1000;
+    }
+
 }
 
 
