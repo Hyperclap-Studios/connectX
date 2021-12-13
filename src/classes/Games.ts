@@ -25,6 +25,10 @@ class Games {
         return this.games.find(game => game.uuid === uuid) ?? null;
     }
 
+    public getGameByName(name: string): Game | null {
+        return this.games.find(game => game.name.toLowerCase() === name.toLowerCase()) ?? null;
+    }
+
     public getLobbies(): any {
         return this.games.map(game => {
             return {
@@ -36,6 +40,12 @@ class Games {
                     hasPassword: game.config.password !== '',
                 }
             }
+        });
+    }
+
+    public checkPlayersInGame(): void {
+        this.games.forEach(game => {
+            game.checkPlayersInGame();
         });
     }
 

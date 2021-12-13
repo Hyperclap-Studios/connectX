@@ -1,7 +1,8 @@
 import Board from "./Board";
 import Users from "./Users";
 import {generateUUID} from "../lib/helpers";
-import { hash } from 'bcrypt';
+import {compare, hash} from 'bcrypt';
+import {sign, verify} from "jsonwebtoken";
 
 
 class Game {
@@ -47,12 +48,60 @@ class Game {
         }
     }
 
+    public getJWT(): string | null {
+        if (process.env.JWT_SECRET) {
+            return sign({
+                name: this.name,
+                uuid: this.uuid,
+            }, process.env.JWT_SECRET);
+        }
+        return null;
+    }
+
+    public verifyJWT(token: string): boolean {
+        if (process.env.JWT_SECRET) {
+            try {
+                const payload = verify(token, process.env.JWT_SECRET) as IGameJWTPayload;
+                return payload.uuid === this.uuid;
+            } catch (e: any) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public async checkPassword(password: string): Promise<boolean> {
+        if (this.config.password && this.config.password !== '') {
+            return await compare(password, this.config.password);
+        }
+        return true;
+    }
+
+    public checkPlayersInGame(): void {
+        this.players.users.forEach(user => {
+            if (!user.inGame()) {
+                console.log(`Removed user ${user.username} from game ${this.name} due to inactivity`);
+                this.players.removeUser(user);
+            }
+        });
+    }
+
+    public getClientGame() {
+        return {
+            name: this.name,
+            uuid: this.uuid,
+            board: this.board,
+            players: this.players.clientUsers,
+            gravity: this.gravity,
+        };
+    }
+
     public checkPlayersAlive(): void {
         this.players.checkAlive();
     }
 
     private async hashPassword(): Promise<void> {
-        if (this.config.password && this.config.password !== '') await hash(this.config.password, 10);
+        if (this.config.password && this.config.password !== '') this.config.password = await hash(this.config.password, 10);
     }
 }
 

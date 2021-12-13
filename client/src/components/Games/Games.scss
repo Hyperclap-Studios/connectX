@@ -1,0 +1,35 @@
+
+
+.games {
+  width: 100%;
+  max-width: var(--mw-container);
+
+  &_game, button {
+    width: 100%;
+    padding: 1rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  button {
+    &:not(:hover):focus {
+      background-color: transparent;
+      border-color: var(--c-border);
+    }
+    margin-bottom: 4rem;
+  }
+
+  &_game {
+    display: flex;
+    justify-content: space-between;
+    transition: all var(--tms) ease-in-out;
+    cursor: pointer;
+    border: 2px solid var(--c-border);
+    border-radius: var(--br);
+    color: inherit;
+
+    &:hover {
+      border-color: var(--c-pri);
+      background-color: var(--c-pri);
+    }
+  }
+}

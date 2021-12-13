@@ -10,9 +10,29 @@ const modalState  = atom<IModalState>({
     }
 });
 
+const gameState = atom<IGame>({
+    key: 'gameState',
+    default: {
+        name: '',
+        uuid: '',
+        board: {
+            grid: [],
+            width: 0,
+            height: 0,
+        },
+        players: [],
+        gravity: {x: 0, y: 0}
+    }
+});
+
 const tokenState = atom<string>({
     key: 'tokenState',
     default: localStorage.getItem('token') ?? '',
+});
+
+const lobbyTokenState = atom<string>({
+    key: 'lobbyTokenState',
+    default: localStorage.getItem('lobbyToken') ?? '',
 });
 
 const lobbiesState = atom<ILobby[]>({
@@ -20,4 +40,9 @@ const lobbiesState = atom<ILobby[]>({
     default: [],
 });
 
-export { modalState, tokenState, lobbiesState };
+const inLobbyState = atom<string | null>({
+    key: 'inLobbyState',
+    default: null,
+});
+
+export { modalState, tokenState, lobbiesState, lobbyTokenState, gameState, inLobbyState };

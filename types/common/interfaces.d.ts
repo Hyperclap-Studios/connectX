@@ -25,6 +25,10 @@ interface IUserPingPayload {
     msg?: 'pong',
 }
 
+interface IGamePingPayload {
+    uuid: string,
+}
+
 interface ILobbyConfig {
     maxPlayers: number,
     hasPassword: boolean,
@@ -35,4 +39,9 @@ interface ILobby {
     uuid: string,
     playerCount: number,
     config: ILobbyConfig,
+}
+
+interface IGameJWTPayload {
+    name: string,
+    uuid: string,
 }

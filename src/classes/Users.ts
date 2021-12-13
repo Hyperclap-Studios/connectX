@@ -44,6 +44,10 @@ class Users {
         });
     }
 
+    get clientUsers() {
+        return this.users.map(user => {return user.getClientUser()});
+    }
+
     get playerCount() {
         return this.users.length;
     }

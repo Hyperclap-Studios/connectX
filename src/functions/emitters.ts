@@ -9,6 +9,12 @@ const pingUsers = () => {
     });
 };
 
+const pingGameUsers = () => {
+    io.emit('game_ping', {
+        msg: 'ping',
+    });
+};
+
 const updateLobbies = (socket?: Socket): boolean => {
     let target = socket ? socket : io;
     return target.emit('update_lobbies', {
@@ -16,4 +22,4 @@ const updateLobbies = (socket?: Socket): boolean => {
     });
 };
 
-export { pingUsers, updateLobbies };
+export { pingUsers, pingGameUsers, updateLobbies };
