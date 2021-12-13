@@ -5,7 +5,9 @@ interface IUserGameData {
     hasTurn: boolean,
 }
 
+
 class User {
+
     public uuid: string;
     public username: string;
     public lastPing: number;
@@ -13,6 +15,7 @@ class User {
     public gameData: IUserGameData;
 
     constructor(username: string) {
+
         this.username = username;
         this.lastPing = Date.now();
         this.uuid = generateUUID();
@@ -20,7 +23,10 @@ class User {
         this.gameData = {
             hasTurn: false,
         };
+
     }
+
 }
+
 
 export default User;
