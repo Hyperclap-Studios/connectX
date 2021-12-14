@@ -52,3 +52,30 @@ interface IBoard {
     width: number,
     height: number,
 }
+
+interface ICellProps {
+    x: number,
+    y: number,
+}
+
+interface ICoinProps {
+    x: number,
+    y: number,
+    color: TUserColor,
+}
+
+interface ICoin {
+    x: number,
+    y: number,
+    velocity: {x: number, y: number},
+    color: TUserColor,
+    locked: boolean,
+}
+
+interface ICell {
+    x: number,
+    y: number,
+    state: TCellState,
+    color: TUserColor,
+    connected: boolean,
+}

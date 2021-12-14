@@ -45,4 +45,9 @@ const inLobbyState = atom<string | null>({
     default: null,
 });
 
-export { modalState, tokenState, lobbiesState, lobbyTokenState, gameState, inLobbyState };
+const coinsState = atom<ICoin[]>({
+    key: 'coinsState',
+    default: [],
+});
+
+export { modalState, tokenState, lobbiesState, lobbyTokenState, gameState, inLobbyState, coinsState };

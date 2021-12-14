@@ -48,8 +48,8 @@ function App() {
     useEffect(() => {
         socket.off('game_ping').on('game_ping', (payload) => {
             if (inLobby !== null) {
-                console.log(inLobby);
-                console.log('EMIT GAME_PING');
+                //console.log(inLobby);
+                //console.log('EMIT GAME_PING');
                 socket.emit('game_ping', {
                     uuid: inLobby
                 });
