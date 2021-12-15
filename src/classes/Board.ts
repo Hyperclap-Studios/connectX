@@ -27,8 +27,11 @@ class Board {
                 const vertical = this.checkConnectionAtCell(cell, length, 0, 1);
                 if (vertical) connections.push(vertical);
 
-                const diagonal = this.checkConnectionAtCell(cell, length, 1, 1);
-                if (diagonal) connections.push(diagonal);
+                const diagonal1 = this.checkConnectionAtCell(cell, length, 1, 1);
+                if (diagonal1) connections.push(diagonal1);
+
+                const diagonal2 = this.checkConnectionAtCell(cell, length, 1, -1);
+                if (diagonal2) connections.push(diagonal2);
 
             }
         }
@@ -39,7 +42,10 @@ class Board {
     private checkConnectionAtCell(cell: ICell, length: number, dx: number, dy: number, setConnected: boolean = true): ICell[] | null {
         if (cell.state === null) return null;
 
-        if (cell.y + dy * length > this.height || cell.x + dx * length > this.width) return null;
+        const lengthY = cell.y + dy * length;
+        const lengthX = cell.x + dx * length;
+
+        if (lengthY > this.height || lengthY < 0 || lengthX > this.width || lengthX < 0) return null;
 
         let cells: ICell[] = [cell];
 

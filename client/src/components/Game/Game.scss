@@ -3,6 +3,80 @@
 .game {
   text-align: center;
 
+  &_leave {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+
+    &:hover {
+      a {
+        color: var(--c-pri) !important;
+      }
+    }
+  }
+
+  &_info {
+
+    &_gravity {
+      span {
+        margin-right: 1rem;
+      }
+    }
+    margin-bottom: 2rem;
+  }
+
+  &_player {
+    display: inline-flex;
+    border: 1px solid var(--c-border);
+
+    border-radius: var(--br);
+    padding: .5rem 1rem;
+
+    margin: 1rem;
+
+    transition: all 100ms ease-in-out;
+
+    &.isReady {
+      background-color: var(--c-pri);
+      border-color: var(--c-pri);
+    }
+
+    &.hasTurn {
+      transform: scale(1.25);
+    }
+
+    &:not(.isReady) {
+      &.red {
+        background-color: var(--c-red);
+      }
+
+      &.yellow {
+        background-color: var(--c-yellow);
+      }
+
+      &.green {
+        background-color: var(--c-green);
+      }
+
+      &.blue {
+        background-color: var(--c-blue);
+      }
+
+      &.purple {
+        background-color: var(--c-purple);
+      }
+
+      &.orange {
+        background-color: var(--c-orange);
+      }
+    }
+
+    &.isPlayer {
+      font-weight: 800;
+      cursor: pointer;
+    }
+  }
+
   &_board {
     margin-bottom: 4rem;
     position: relative;

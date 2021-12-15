@@ -3,6 +3,7 @@ import Users from "./Users";
 import {generateUUID} from "../lib/helpers";
 import {compare, hash} from 'bcrypt';
 import {sign, verify} from "jsonwebtoken";
+import User from "./User";
 
 
 class Game {
@@ -13,6 +14,10 @@ class Game {
     public config: IGameConfig;
     public players: Users;
     public gravity: {x: -1 | 0 | 1, y: -1 | 0 | 1};
+    public state: 'waiting' | 'playing' | 'finished';
+    public winner: User | null;
+    public pendingRestart: boolean;
+    public lastPing: number;
 
     constructor(name: string, config?: IGameConfig) {
         this.config = {
@@ -21,6 +26,7 @@ class Game {
             maxPlayers: 8,
             password: '',
             powerUps: false,
+            gameMode: 'classic',
             ...config,
         };
         this.hashPassword().then();
@@ -29,6 +35,18 @@ class Game {
         this.board = new Board(this.config.boardSize?.width, this.config.boardSize?.height);
         this.players = new Users();
         this.gravity = {x: 0, y: 1};
+        this.state = 'waiting';
+        this.winner = null;
+        this.pendingRestart = false;
+        this.lastPing = Date.now();
+    }
+
+    public start(): void {
+        this.state = 'playing';
+        this.board.initGrid();
+        this.gravity = {x: 0, y: 1};
+        this.winner = null;
+        this.players.users[Math.round(Math.random() * (this.players.users.length - 1))].gameData.hasTurn = true;
     }
 
     public applyGravity(): void { // O(this.board.width * this.board.height * (this.board.width | this.board.height))
@@ -81,9 +99,33 @@ class Game {
         this.players.users.forEach(user => {
             if (!user.inGame()) {
                 console.log(`Removed user ${user.username} from game ${this.name} due to inactivity`);
+                const oldIndex = this.players.users.indexOf(user);
                 this.players.removeUser(user);
+                if (this.state === 'playing') {
+                    if (this.players.users.length === 1) {
+                        this.endGame(this.players.users[0]);
+                    } else if (user.gameData.hasTurn) {
+                        this.nextTurn(user, 0, oldIndex);
+                    }
+                }
             }
         });
+    }
+
+    public checkReady(): boolean {
+        if (this.players.users.length < 2) return false;
+
+        let ready = true;
+        this.players.users.forEach(user => {
+            if (!user.gameData.isReady) ready = false;
+        });
+        return ready;
+    }
+
+    public tryStart(): void {
+        if (this.checkReady()) {
+            this.start();
+        }
     }
 
     public getClientGame() {
@@ -93,6 +135,9 @@ class Game {
             board: this.board,
             players: this.players.clientUsers,
             gravity: this.gravity,
+            state: this.state,
+            winner: this.winner?.getClientUser() ?? null,
+            gameMode: this.config.gameMode ?? 'classic',
         };
     }
 
@@ -100,17 +145,38 @@ class Game {
         this.players.checkAlive();
     }
 
+    public nextTurn(oldUser: User, offset: number = 1, oldIndex?: number): void {
+        const index = oldIndex ? oldIndex : this.players.users.indexOf(oldUser);
+        oldUser.gameData.hasTurn = false;
+        const next = (index + offset) % this.players.users.length;
+        console.log(next);
+        this.players.users[next].gameData.hasTurn = true;
+    }
+
+    public endGame(winner: User) {
+        this.winner = winner;
+        this.state = 'finished';
+        this.players.users.forEach(user => {
+            user.gameData.hasTurn = false;
+            user.gameData.isReady = false;
+        });
+    }
+
     public tryMove(uuid: string, x: number, y: number): boolean {
         const user = this.players.getUser(uuid);
-        if (user && this.config.winLength) {
+        if (user && this.config.winLength && user.gameData.hasTurn) {
             const cell = this.board.getCell(x, y);
             if (cell && cell.state === null) {
                 cell.color = user.color;
                 cell.state = user.uuid;
                 this.applyGravity();
                 const connections = this.board.checkConnection(this.config.winLength);
-                console.log(connections);
-                this.nextGravity();
+                if (connections && connections.length > 0) {
+                    this.endGame(user);
+                } else {
+                    if (this.config.gameMode === 'gravitySwitch') this.nextGravity();
+                    this.nextTurn(user);
+                }
                 return true;
             }
         }

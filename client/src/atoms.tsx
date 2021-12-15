@@ -21,7 +21,10 @@ const gameState = atom<IGame>({
             height: 0,
         },
         players: [],
-        gravity: {x: 0, y: 0}
+        gravity: {x: 0, y: 0},
+        state: 'waiting',
+        winner: null,
+        gameMode: 'classic',
     }
 });
 
@@ -50,14 +53,11 @@ const coinsState = atom<ICoin[]>({
     default: [],
 });
 
-const playerState = atom({
+const playerState = atom<IUser>({
     key: 'playerState',
     default: {
         color: '',
-        gameData: { hasTurn: false },
-        lastGamePing: Date.now(),
-        lastPing: Date.now(),
-        socketId: '',
+        gameData: { hasTurn: false, isReady: false },
         username: '',
         uuid: '',
     }

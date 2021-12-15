@@ -1,4 +1,5 @@
 import Game from "./Game";
+import {updateGame, updateLobbies} from "../functions/emitters";
 
 
 class Games {
@@ -46,6 +47,23 @@ class Games {
     public checkPlayersInGame(): void {
         this.games.forEach(game => {
             game.checkPlayersInGame();
+
+            if (game.state === 'finished' && !game.pendingRestart) {
+                game.pendingRestart = true;
+                setTimeout(() => {
+                    game.pendingRestart = false;
+                    game.state = 'waiting';
+                    game.board.initGrid();
+                    updateGame(game);
+                }, 3000);
+            }
+
+            updateGame(game);
+
+            if (game.players.users.length === 0 && Date.now() - game.lastPing > 30 * 1000) {
+                this.removeGame(game);
+                updateLobbies();
+            }
         });
     }
 
@@ -54,8 +72,6 @@ class Games {
             game.checkPlayersAlive();
         });
     }
-
-
 }
 
 

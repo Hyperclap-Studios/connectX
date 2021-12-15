@@ -36,6 +36,9 @@ interface IGame {
     board: IBoard,
     players: IUser[],
     gravity: {x: -1 | 0 | 1, y: -1 | 0 | 1},
+    state: 'waiting' | 'playing' | 'finished',
+    winner: IUser | null,
+    gameMode: 'classic' | 'gravitySwitch',
 }
 
 interface IUser {
@@ -44,6 +47,7 @@ interface IUser {
     color: TUserColor,
     gameData: {
         hasTurn: boolean,
+        isReady: boolean,
     }
 }
 

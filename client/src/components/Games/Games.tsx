@@ -38,6 +38,10 @@ export default function Games() {
 function CreateLobby() {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+    const [width, setWidth] = useState(9);
+    const [height, setHeight] = useState(7);
+    const [winLength, setWinLength] = useState(4);
+    const [isGravitySwitch, setIsGravitySwitch] = useState(false);
     const [error, setError] = useState('');
     const token = useRecoilValue(tokenState);
     const setLobbyToken = useSetRecoilState(lobbyTokenState);
@@ -51,6 +55,10 @@ function CreateLobby() {
             const response = await axios.post('/api/games', {
                 name,
                 password,
+                width,
+                height,
+                winLength,
+                gameMode: isGravitySwitch ? 'gravitySwitch' : 'classic',
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -96,6 +104,22 @@ function CreateLobby() {
                 <label>
                     <span className={password === '' ? '' : 'focus'}>Password</span>
                     <input value={password} onChange={e => setPassword(e.target.value)} type={'password'} />
+                </label>
+                <label>
+                    <span className={'focus'}>Board Width</span>
+                    <input value={width} onChange={e => setWidth(parseInt(e.target.value))} type={'number'} />
+                </label>
+                <label>
+                    <span className={'focus'}>Board Height</span>
+                    <input value={height} onChange={e => setHeight(parseInt(e.target.value))} type={'number'} />
+                </label>
+                <label>
+                    <span className={'focus'}>Win Length</span>
+                    <input value={winLength} onChange={e => setWinLength(parseInt(e.target.value))} type={'number'} />
+                </label>
+                <label>
+                    <span className={'focus'}>Gravity Switch?</span>
+                    <input checked={isGravitySwitch} onChange={e => setIsGravitySwitch(e.target.checked)} type={'checkbox'} />
                 </label>
                 <button onClick={e => createLobby(e)}>Create</button>
                 <span className={'error'}>{error}</span>

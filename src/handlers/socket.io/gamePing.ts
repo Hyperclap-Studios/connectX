@@ -8,6 +8,7 @@ function gamePingHandler(this: Socket, payload: IGamePingPayload) {
 
     if (game && user) {
         user.lastGamePing = Date.now();
+        game.lastPing = Date.now();
     }
 };
 

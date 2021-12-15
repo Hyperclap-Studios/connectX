@@ -1,10 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import { useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {coinsState, gameState, inLobbyState, lobbyTokenState, playerState, tokenState} from "../../atoms";
 import socket from "../../instances/socket";
 import './Game.scss';
+import { FaArrowLeft, FaArrowRight, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 
 export default function Game({uuid}: IGameProps) {
@@ -55,20 +56,51 @@ export default function Game({uuid}: IGameProps) {
         }
     };
 
+    const toggleReady = () => {
+        socket.emit('toggle_ready', {
+            gameToken: lobbyToken,
+            gameUUID: game.uuid,
+        });
+    };
+
     return (
         <>
+            <span className={'game_leave'}><Link to={'/'}>Leave</Link></span>
             {
                 lobbyToken ? (
                     <div className={'game'}>
+
                         <h1>{game.name}</h1>
+                        <div className={'game_info'}>
+                            <div className={'game_info_winner'}>{game.state === 'finished' ? `${game.winner?.username} wins!` : ''}</div>
+                            <div className={'game_info_turn'}>{player.gameData.hasTurn ? 'Your Turn' : ''}</div>
+                            {
+                                game.gameMode === 'gravitySwitch' ? (
+                                    <div className={'game_info_gravity'}>
+                                        <span>Next Gravity:</span>
+                                        {
+                                            game.gravity.y === 1 ? <FaArrowDown /> : game.gravity.y === -1 ? <FaArrowUp /> : (
+                                                game.gravity.x === 1 ? <FaArrowRight /> : game.gravity.x === -1 ? <FaArrowLeft /> : ''
+                                            )
+                                        }
+                                    </div>
+                                ) : ''
+                            }
+                        </div>
                         <GameBoard />
                         <div className={'game_players'}>
                             {
-                                game.players.map(player => (
-                                    <div key={player.uuid} className={'game_player'}>
-                                        <div className={'game_player_name'}>{player.username}</div>
-                                    </div>
-                                ))
+                                game && player ? (
+                                    <>
+                                        {
+                                            game.players.map(_player => (
+                                                <div onClick={() => {if (_player.uuid === player.uuid) toggleReady()}} key={_player.uuid} className={`game_player ${game.state !== 'waiting' ? _player.color : ''} ${_player.gameData.hasTurn ? 'hasTurn' : ''} ${_player.gameData.isReady && game.state === 'waiting' ? 'isReady' : ''} ${_player.uuid === player.uuid ? 'isPlayer' : ''}`}>
+                                                    <div className={'game_player_name'}>{_player.username}</div>
+                                                </div>
+                                            ))
+                                        }
+                                    </>
+                                ) : ''
                             }
                         </div>
                     </div>
@@ -154,7 +186,7 @@ function Coin({x, y, color, connected}: ICoin) {
         <div style={{
             left: (x / game.board.width) * 100 + '%',
             top: (y / game.board.height) * 100 + '%',
-        }} className={`game_board_coin ${connected ? 'connected' : ''} ${color} ${color !== '' ? `fallInY${game.gravity.y}X${game.gravity.x}` : ''}`} />
+        }} className={`game_board_coin ${connected ? 'connected' : ''} ${color} ${color !== '' ? (game.gameMode === 'gravitySwitch' ? `fallInY${game.gravity.y}X${game.gravity.x}` : 'fallInY0X1') : ''}`} />
     );
 }
 

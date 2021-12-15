@@ -2,7 +2,7 @@ import {Router} from "express";
 import {body, validationResult} from "express-validator";
 import Game from "../../classes/Game";
 import gamesInstance from '../../instances/games';
-import {updateLobbies} from "../../functions/emitters";
+import {updateGame, updateLobbies} from "../../functions/emitters";
 import users from "../../instances/users";
 import authentication from "../../middleware/express/authentication";
 
@@ -16,20 +16,23 @@ games.post('/:uuid/join', authentication, async (req, res) => {
     if (game) console.log(game.verifyJWT(req.body.gameToken));
 
     if (game && user && (game.verifyJWT(req.body.gameToken) || await game.checkPassword(req.body.password))) {
+
         game.players.addUser(user);
         user.lastGamePing = Date.now();
 
         updateLobbies();
 
-        res.json({
+        updateGame(game);
+
+        return res.json({
             success: true,
             game: game.getClientGame(),
             gameToken: game.getJWT(),
             message: 'Player added to game',
-            user,
+            user: user.getClientUser(),
         });
     } else {
-        res.status(400).json({
+        return res.status(400).json({
             success: false,
             error: game ? 'Incorrect password.' : 'Game not found.'
         });
@@ -52,6 +55,27 @@ games.post('/',
             error: errors.array().map(e => e.msg).join(' '),
         });
 
+        if (req.body.winLength > req.body.width || req.body.winLength > req.body.height) {
+            return res.status(400).json({
+                success: false,
+                error: 'Win length must be less than the board size.',
+            });
+        }
+
+        if (req.body.width < req.body.winLength && req.body.height < req.body.winLength) {
+            return res.status(400).json({
+                success: false,
+                error: 'Win length must be longer than or equal as width or height.',
+            });
+        }
+
+        if (req.body.gameMode !== 'classic' && req.body.gameMode !== 'gravitySwitch') {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid game mode.',
+            });
+        }
+
         if (gamesInstance.getGameByName(req.body.name)) return res.status(400).json({
             success: false,
             error: 'Game with this name already exists.',
@@ -62,6 +86,9 @@ games.post('/',
 
         const game = new Game(req.body.name, {
             password: req.body.password,
+            winLength: req.body.winLength,
+            boardSize: {width: req.body.width, height: req.body.height},
+            gameMode: req.body.gameMode,
         })
 
         gamesInstance.addGame(game);

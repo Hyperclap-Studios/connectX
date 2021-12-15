@@ -20,16 +20,17 @@ class User {
         this.socketId = '';
         this.gameData = {
             hasTurn: false,
+            isReady: false,
         };
 
     }
 
     public isAlive(): boolean {
-        return Date.now() - this.lastPing < (parseInt(<string>process.env.PLAYER_TIMEOUT) || 30) * 1000;
+        return Date.now() - this.lastPing < (parseInt(<string>process.env.PLAYER_TIMEOUT) || 60) * 1000;
     }
 
     public inGame(): boolean {
-        return Date.now() - this.lastGamePing < (parseInt(<string>process.env.GAME_TIMEOUT) || 10) * 1000;
+        return Date.now() - this.lastGamePing < (parseInt(<string>process.env.GAME_TIMEOUT) || 30) * 1000;
     }
 
     public getClientUser() {

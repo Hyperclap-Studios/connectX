@@ -27,6 +27,7 @@ const updateGame = (game: Game): void => {
     game.players.users.forEach(user => {
         io.to(user.socketId).emit('update_game', {
             game: game.getClientGame(),
+            user: user.getClientUser(),
         });
     });
 }

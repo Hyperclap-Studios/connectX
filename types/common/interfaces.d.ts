@@ -11,6 +11,7 @@ interface ICell {
 
 interface IUserGameData {
     hasTurn: boolean,
+    isReady: boolean,
 }
 
 interface IGameConfig {
@@ -19,6 +20,7 @@ interface IGameConfig {
     maxPlayers?: number,
     password?: string,
     powerUps?: boolean,
+    gameMode?: TGameMode,
 }
 
 interface IUserPingPayload {
