@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Games from "./components/Games/Games";
 import socket from "./instances/socket";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {inLobbyState, lobbiesState, tokenState} from "./atoms";
+import {gameState, inLobbyState, lobbiesState, tokenState} from "./atoms";
 import Index from "./routes/Index/Index";
 import axios from "axios";
 import Modal from "./components/Modal/Modal";
@@ -15,6 +15,7 @@ function App() {
     const [token, setToken] = useRecoilState(tokenState);
     const [lobbies, setLobbies] = useRecoilState(lobbiesState);
     const inLobby = useRecoilValue(inLobbyState);
+    const setGame = useSetRecoilState(gameState);
 
     useEffect(() => {
         socket.auth = {
@@ -54,6 +55,11 @@ function App() {
                     uuid: inLobby
                 });
             }
+        });
+
+        socket.off('update_game').on('update_game', (payload) => {
+            console.log('UPDATE_GAME');
+            setGame(payload.game);
         });
     }, [inLobby]);
 

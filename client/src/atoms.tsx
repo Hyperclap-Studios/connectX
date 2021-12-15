@@ -50,4 +50,17 @@ const coinsState = atom<ICoin[]>({
     default: [],
 });
 
-export { modalState, tokenState, lobbiesState, lobbyTokenState, gameState, inLobbyState, coinsState };
+const playerState = atom({
+    key: 'playerState',
+    default: {
+        color: '',
+        gameData: { hasTurn: false },
+        lastGamePing: Date.now(),
+        lastPing: Date.now(),
+        socketId: '',
+        username: '',
+        uuid: '',
+    }
+});
+
+export { modalState, tokenState, lobbiesState, lobbyTokenState, gameState, inLobbyState, coinsState, playerState };

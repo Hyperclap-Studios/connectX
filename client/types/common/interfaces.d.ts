@@ -67,9 +67,8 @@ interface ICoinProps {
 interface ICoin {
     x: number,
     y: number,
-    velocity: {x: number, y: number},
     color: TUserColor,
-    locked: boolean,
+    connected: boolean,
 }
 
 interface ICell {

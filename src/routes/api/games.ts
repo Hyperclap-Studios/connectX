@@ -25,7 +25,8 @@ games.post('/:uuid/join', authentication, async (req, res) => {
             success: true,
             game: game.getClientGame(),
             gameToken: game.getJWT(),
-            message: 'Player added to game'
+            message: 'Player added to game',
+            user,
         });
     } else {
         res.status(400).json({

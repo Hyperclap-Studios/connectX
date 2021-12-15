@@ -29,6 +29,12 @@ interface IGamePingPayload {
     uuid: string,
 }
 
+interface IPlaceCoinPayload {
+    x: number,
+    y: number,
+    gameUUID: string,
+}
+
 interface ILobbyConfig {
     maxPlayers: number,
     hasPassword: boolean,

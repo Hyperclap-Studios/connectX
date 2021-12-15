@@ -1,6 +1,7 @@
 import {io} from "../instances/server";
 import games from "../instances/games";
 import {Socket} from "socket.io";
+import Game from "../classes/Game";
 
 
 const pingUsers = () => {
@@ -22,4 +23,12 @@ const updateLobbies = (socket?: Socket): boolean => {
     });
 };
 
-export { pingUsers, pingGameUsers, updateLobbies };
+const updateGame = (game: Game): void => {
+    game.players.users.forEach(user => {
+        io.to(user.socketId).emit('update_game', {
+            game: game.getClientGame(),
+        });
+    });
+}
+
+export { pingUsers, pingGameUsers, updateLobbies, updateGame };

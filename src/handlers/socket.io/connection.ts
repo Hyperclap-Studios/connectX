@@ -6,6 +6,7 @@ import {updateLobbies} from "../../functions/emitters";
 import users from "../../instances/users";
 import User from "../../classes/User";
 import gamePingHandler from "./gamePing";
+import placeCoinHandler from "./placeCoin";
 
 
 const connectionHandler = (socket: Socket) => {
@@ -25,6 +26,7 @@ const connectionHandler = (socket: Socket) => {
     socket.on('disconnect', disconnectHandler);
     socket.on('user_ping', userPingHandler);
     socket.on('game_ping', gamePingHandler);
+    socket.on('place_coin', placeCoinHandler);
 
     socket.emit('update_games', games);
 

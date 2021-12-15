@@ -5,7 +5,7 @@ class Board {
     public width: number;
     public height: number;
 
-    constructor(width: number = 7, height: number = 5) {
+    constructor(width: number = 9, height: number = 7) {
         this.width = width;
         this.height = height;
         this.grid = [];
@@ -17,8 +17,8 @@ class Board {
 
         let connections: ICell[][] = [];
 
-        for (let y = 0; y < this.height - length + 1; y++) {
-            for (let x = 0; x < this.width - length + 1; x++) {
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
                 const cell = this.grid[y][x];
 
                 const horizontal = this.checkConnectionAtCell(cell, length, 1, 0);
@@ -38,6 +38,8 @@ class Board {
 
     private checkConnectionAtCell(cell: ICell, length: number, dx: number, dy: number, setConnected: boolean = true): ICell[] | null {
         if (cell.state === null) return null;
+
+        if (cell.y + dy * length > this.height || cell.x + dx * length > this.width) return null;
 
         let cells: ICell[] = [cell];
 

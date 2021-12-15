@@ -100,6 +100,39 @@ class Game {
         this.players.checkAlive();
     }
 
+    public tryMove(uuid: string, x: number, y: number): boolean {
+        const user = this.players.getUser(uuid);
+        if (user && this.config.winLength) {
+            const cell = this.board.getCell(x, y);
+            if (cell && cell.state === null) {
+                cell.color = user.color;
+                cell.state = user.uuid;
+                this.applyGravity();
+                const connections = this.board.checkConnection(this.config.winLength);
+                console.log(connections);
+                this.nextGravity();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public nextGravity(): void {
+        if (this.gravity.y === 1) {
+            this.gravity.y = 0;
+            this.gravity.x = 1;
+        } else if (this.gravity.x === 1) {
+            this.gravity.x = 0;
+            this.gravity.y = -1;
+        } else if (this.gravity.y === -1) {
+            this.gravity.y = 0;
+            this.gravity.x = -1;
+        } else if (this.gravity.x === -1) {
+            this.gravity.x = 0;
+            this.gravity.y = 1;
+        }
+    }
+
     private async hashPassword(): Promise<void> {
         if (this.config.password && this.config.password !== '') this.config.password = await hash(this.config.password, 10);
     }

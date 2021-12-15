@@ -2,13 +2,14 @@ import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import { useNavigate} from "react-router-dom";
-import {coinsState, gameState, inLobbyState, lobbyTokenState, tokenState} from "../../atoms";
+import {coinsState, gameState, inLobbyState, lobbyTokenState, playerState, tokenState} from "../../atoms";
 import socket from "../../instances/socket";
 import './Game.scss';
 
 
 export default function Game({uuid}: IGameProps) {
     const [game, setGame] = useRecoilState(gameState);
+    const [player, setPlayer] = useRecoilState(playerState);
     const [coins, setCoins] = useRecoilState(coinsState);
     const [lobbyToken, setLobbyToken] = useRecoilState(lobbyTokenState);
     const [inLobby, setInLobby] = useRecoilState(inLobbyState);
@@ -34,21 +35,9 @@ export default function Game({uuid}: IGameProps) {
                 console.log('IN LOBBY');
                 setLobbyToken(response.data.gameToken);
                 localStorage.setItem('lobbyToken', response.data.gameToken);
-                console.log(response.data.game);
+                console.log(response.data);
                 setGame(response.data.game);
-
-                // Fill Coins
-                let _coins: ICoin[] = [];
-                response.data.game.board.grid.forEach((row: ICell[]) => row.forEach((cell: ICell) => {
-                    coins.push({
-                        x: cell.x,
-                        y: cell.y,
-                        velocity: {x: 0, y: 0},
-                        color: cell.color,
-                        locked: true,
-                    });
-                }));
-                setCoins(_coins);
+                setPlayer(response.data.user);
 
                 return true;
             } else {
@@ -62,7 +51,7 @@ export default function Game({uuid}: IGameProps) {
                 localStorage.setItem('lobbyToken', '');
                 if (e.response?.data.error === 'Game not found.') navigate('/');
                 return (e.response?.data.error ?? '');
-            } else console.error(e.message);
+            } else console.error(`Request Error: ${e.message}`);
         }
     };
 
@@ -91,48 +80,22 @@ export default function Game({uuid}: IGameProps) {
 
 function Coins() {
     const game = useRecoilValue(gameState);
-    const [coins, setCoins] = useRecoilState(coinsState);
-    const [lastTime, setLastTime] = useState(Date.now());
-    const [started, setStarted] = useState(false);
 
-    const velocityMultiplier = 0.01;
-    const gravityMultiplier = 0.01;
-
-    const frame = useCallback(() => {
-        const nowTime = Date.now();
-        const delta = nowTime - lastTime;
-        setLastTime(nowTime);
-
-        let _coins = [...coins];
-
-        for (let i = 0; i < _coins.length; i++) {
-            const coin = _coins[i];
-
-            if (!coin.locked && coin.x >= 0 && coin.x < game.board.width - 1 && coin.y >= 0 && coin.y < game.board.height - 1) {
-                coin.velocity.x += delta * gravityMultiplier;
-                coin.velocity.y += delta * gravityMultiplier;
-
-                coin.x += coin.velocity.x * delta * velocityMultiplier;
-                coin.y += coin.velocity.y * delta * velocityMultiplier;
-            }
-        }
-
-        setCoins(_coins);
-
-        requestAnimationFrame(frame);
-    }, [coins]);
-
-    useEffect(() => {
-        if (coins.length > 0 && !started) {
-            setStarted(true);
-            requestAnimationFrame(frame);
-        }
-    }, [coins])
+    const coins = useCallback(() => {
+        console.log('COINS');
+        const _coins: JSX.Element[] = [];
+        game.board.grid.forEach(row => row.forEach(cell => {
+            _coins.push(<Coin key={cell.x + '-' + cell.y} x={cell.x} y={cell.y} color={cell.color} connected={cell.connected} />);
+        }));
+        return _coins;
+    }, [game]);
 
     return (
-        coins.map((coin, i) => (
-            <Coin key={i} x={coin.x} y={coin.y} velocity={coin.velocity} color={coin.color} locked={coin.locked}  />
-        ))
+        <>
+            {
+                coins()
+            }
+        </>
     );
 }
 
@@ -157,25 +120,41 @@ function GameBoard() {
 
     return (
         <div className={'game_board'}>
-            {grid()}
+            <Coins />
+            <div className={'game_board_grid'}>{grid()}</div>
         </div>
     );
 }
 
 function Cell({x, y}: ICellProps) {
+    const game = useRecoilValue(gameState);
+    const player = useRecoilValue(playerState);
+    const [coins, setCoins] = useRecoilState(coinsState);
+
+
+    const place = () => {
+        if (!game) return;
+
+        socket.emit('place_coin', {
+            x,
+            y,
+            gameUUID: game.uuid,
+        });
+    };
+
     return (
-        <div className={'game_board_cell'} />
+        <div onClick={place} className={'game_board_cell'} />
     );
 }
 
-function Coin({x, y, color, velocity, locked}: ICoin) {
+function Coin({x, y, color, connected}: ICoin) {
     const game = useRecoilValue(gameState);
 
     return (
         <div style={{
             left: (x / game.board.width) * 100 + '%',
             top: (y / game.board.height) * 100 + '%',
-        }} className={'game_board_coin ' + color} />
+        }} className={`game_board_coin ${connected ? 'connected' : ''} ${color} ${color !== '' ? `fallInY${game.gravity.y}X${game.gravity.x}` : ''}`} />
     );
 }
 
