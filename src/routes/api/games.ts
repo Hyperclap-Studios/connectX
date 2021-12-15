@@ -17,8 +17,19 @@ games.post('/:uuid/join', authentication, async (req, res) => {
 
     if (game && user && (game.verifyJWT(req.body.gameToken) || await game.checkPassword(req.body.password))) {
 
+        gamesInstance.games.forEach(_game => {
+            if (game.uuid !== _game.uuid) {
+                _game.players.users.forEach(_user => {
+                    _game.removeUser(user);
+                });
+                updateGame(_game);
+            }
+        });
+
         game.players.addUser(user);
         user.lastGamePing = Date.now();
+        user.gameData.hasTurn = false;
+        user.gameData.isReady = false;
 
         updateLobbies();
 

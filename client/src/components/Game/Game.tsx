@@ -72,7 +72,7 @@ export default function Game({uuid}: IGameProps) {
 
                         <h1>{game.name}</h1>
                         <div className={'game_info'}>
-                            <div className={'game_info_winner'}>{game.state === 'finished' ? `${game.winner?.username} wins!` : ''}</div>
+                            <div className={'game_info_winner'}>{game.state === 'finished' ? `${game.winner ? game.winner.username : 'No one'} wins!` : ''}</div>
                             <div className={'game_info_turn'}>{player.gameData.hasTurn ? 'Your Turn' : ''}</div>
                             {
                                 game.gameMode === 'gravitySwitch' ? (

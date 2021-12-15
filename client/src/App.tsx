@@ -61,8 +61,10 @@ function App() {
         socket.off('update_game').on('update_game', (payload) => {
             //console.log('UPDATE_GAME');
             //console.log(payload);
-            setGame(payload.game);
-            setPlayer(payload.user);
+            if (inLobby === payload.game.uuid) {
+                setGame(payload.game);
+                setPlayer(payload.user);
+            }
         });
     }, [inLobby]);
 

@@ -39,6 +39,16 @@ class Board {
         return connections ? connections : null;
     }
 
+    public isFull(): boolean {
+        let full = true;
+        this.grid.forEach(row => {
+            row.forEach(cell => {
+                if (cell.state === null) full = false;
+            });
+        })
+        return full;
+    }
+
     private checkConnectionAtCell(cell: ICell, length: number, dx: number, dy: number, setConnected: boolean = true): ICell[] | null {
         if (cell.state === null) return null;
 

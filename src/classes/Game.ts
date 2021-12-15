@@ -95,19 +95,24 @@ class Game {
         return true;
     }
 
+    public removeUser(user: User): void {
+        const oldIndex = this.players.users.indexOf(user);
+        if (oldIndex === -1) return;
+        this.players.removeUser(user);
+        if (this.state === 'playing') {
+            if (this.players.users.length === 1) {
+                this.endGame(this.players.users[0]);
+            } else if (user.gameData.hasTurn) {
+                this.nextTurn(user, 0, oldIndex);
+            }
+        }
+    }
+
     public checkPlayersInGame(): void {
         this.players.users.forEach(user => {
             if (!user.inGame()) {
                 console.log(`Removed user ${user.username} from game ${this.name} due to inactivity`);
-                const oldIndex = this.players.users.indexOf(user);
-                this.players.removeUser(user);
-                if (this.state === 'playing') {
-                    if (this.players.users.length === 1) {
-                        this.endGame(this.players.users[0]);
-                    } else if (user.gameData.hasTurn) {
-                        this.nextTurn(user, 0, oldIndex);
-                    }
-                }
+                this.removeUser(user);
             }
         });
     }
@@ -153,7 +158,7 @@ class Game {
         this.players.users[next].gameData.hasTurn = true;
     }
 
-    public endGame(winner: User) {
+    public endGame(winner: User | null): void {
         this.winner = winner;
         this.state = 'finished';
         this.players.users.forEach(user => {
@@ -173,6 +178,9 @@ class Game {
                 const connections = this.board.checkConnection(this.config.winLength);
                 if (connections && connections.length > 0) {
                     this.endGame(user);
+                } else if (this.board.isFull()) {
+                    // Tie
+                    this.endGame(null);
                 } else {
                     if (this.config.gameMode === 'gravitySwitch') this.nextGravity();
                     this.nextTurn(user);
