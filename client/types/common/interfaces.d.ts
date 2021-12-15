@@ -60,6 +60,7 @@ interface IBoard {
 interface ICellProps {
     x: number,
     y: number,
+    isPremoved: boolean,
 }
 
 interface ICoinProps {

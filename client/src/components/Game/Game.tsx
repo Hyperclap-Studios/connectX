@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {Link, useNavigate} from "react-router-dom";
-import {coinsState, gameState, inLobbyState, lobbyTokenState, playerState, tokenState} from "../../atoms";
+import {coinsState, gameState, inLobbyState, lobbyTokenState, playerState, premoveState, tokenState} from "../../atoms";
 import socket from "../../instances/socket";
 import './Game.scss';
 import { FaArrowLeft, FaArrowRight, FaArrowUp, FaArrowDown } from 'react-icons/fa';
@@ -16,12 +16,28 @@ export default function Game({uuid}: IGameProps) {
     const [inLobby, setInLobby] = useRecoilState(inLobbyState);
     const token = useRecoilValue(tokenState);
     const navigate = useNavigate();
+    const [premove, setPremove] = useRecoilState(premoveState);
 
     useEffect(() => {
         join().then();
 
 
     }, []);
+
+    useEffect(() => {
+        if (game && premove && player.gameData.hasTurn) {
+            socket.emit('place_coin', {
+                x: premove.x,
+                y: premove.y,
+                gameUUID: game.uuid,
+            });
+            setPremove(null);
+        }
+    }, [
+        game,
+        player.gameData.hasTurn,
+        premove,
+    ])
 
     const join = async (password: string = ''): Promise<any> => {
         try {
@@ -133,6 +149,7 @@ function Coins() {
 
 function GameBoard() {
     const game = useRecoilValue(gameState);
+    const premove = useRecoilValue(premoveState);
 
     const grid = () => {
         if (!game) return 'Loading board...';
@@ -142,7 +159,7 @@ function GameBoard() {
             let cells = [];
 
             for (let x = 0; x < game.board.width; x++) {
-                cells.push(<Cell x={x} y={y} key={x} />);
+                cells.push(<Cell isPremoved={premove && premove.x === x && premove.y === y} x={x} y={y} key={x} />);
             }
 
             grid.push(<div key={y} className={'game_board_row'}>{cells}</div>);
@@ -158,24 +175,34 @@ function GameBoard() {
     );
 }
 
-function Cell({x, y}: ICellProps) {
+function Cell({x, y, isPremoved}: ICellProps) {
     const game = useRecoilValue(gameState);
     const player = useRecoilValue(playerState);
     const [coins, setCoins] = useRecoilState(coinsState);
+    const [premove, setPremove] = useRecoilState(premoveState);
 
 
     const place = () => {
         if (!game) return;
 
-        socket.emit('place_coin', {
-            x,
-            y,
-            gameUUID: game.uuid,
-        });
+        console.log(player.gameData);
+        if (player.gameData.hasTurn) {
+            console.log('PLACE_COIN');
+            socket.emit('place_coin', {
+                x,
+                y,
+                gameUUID: game.uuid,
+            });
+        } else if (game.state === 'playing') {
+            console.log('PREMOVE');
+            if (premove && premove.x === x && premove.y === y) setPremove(null);
+            else setPremove({x, y});
+            console.log(premove);
+        }
     };
 
     return (
-        <div onClick={place} className={'game_board_cell'} />
+        <div onClick={place} className={`game_board_cell ${player.color} ${isPremoved ? 'premove' : ''}`} />
     );
 }
 

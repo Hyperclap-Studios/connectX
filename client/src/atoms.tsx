@@ -63,4 +63,9 @@ const playerState = atom<IUser>({
     }
 });
 
-export { modalState, tokenState, lobbiesState, lobbyTokenState, gameState, inLobbyState, coinsState, playerState };
+const premoveState = atom<any>({
+    key: 'premoveState',
+    default: null,
+});
+
+export { modalState, tokenState, lobbiesState, lobbyTokenState, gameState, inLobbyState, coinsState, playerState, premoveState };

@@ -168,6 +168,35 @@
 
       border: 1px solid var(--c-border);
 
+      &.premove { // 27 119 154
+        opacity: .5;
+        border-color: #aaa;
+
+        &.red {
+          background-color: var(--c-red);
+        }
+
+        &.yellow {
+          background-color: var(--c-yellow);
+        }
+
+        &.green {
+          background-color: var(--c-green);
+        }
+
+        &.blue {
+          background-color: var(--c-blue);
+        }
+
+        &.purple {
+          background-color: var(--c-purple);
+        }
+
+        &.orange {
+          background-color: var(--c-orange);
+        }
+      }
+
       &:hover {
         cursor: pointer;
         background-color: rgba(255, 255, 255, 0.1);
