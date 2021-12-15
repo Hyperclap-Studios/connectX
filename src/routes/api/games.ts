@@ -26,9 +26,12 @@ games.post('/:uuid/join', authentication, async (req, res) => {
             }
         });
 
-        game.players.addUser(user);
+        if (!game.players.getUser(user.uuid)) {
+            game.players.addUser(user);
+            user.gameData.hasTurn = false;
+        }
+
         user.lastGamePing = Date.now();
-        user.gameData.hasTurn = false;
         user.gameData.isReady = false;
 
         updateLobbies();
