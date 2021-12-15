@@ -8,6 +8,7 @@ import User from "../../classes/User";
 import gamePingHandler from "./gamePing";
 import placeCoinHandler from "./placeCoin";
 import toggleReadyHandler from "./toggleReady";
+import leaveGameHandler from "./leaveGame";
 
 
 const connectionHandler = (socket: Socket) => {
@@ -29,6 +30,7 @@ const connectionHandler = (socket: Socket) => {
     socket.on('game_ping', gamePingHandler);
     socket.on('place_coin', placeCoinHandler);
     socket.on('toggle_ready', toggleReadyHandler);
+    socket.on('leave_game', leaveGameHandler);
 
     socket.emit('update_games', games);
 

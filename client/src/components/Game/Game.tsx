@@ -79,9 +79,18 @@ export default function Game({uuid}: IGameProps) {
         });
     };
 
+    const leave = () => {
+        setInLobby(null);
+        setPremove(null);
+
+        socket.emit('leave_game', {
+            gameUUID: game.uuid,
+        });
+    };
+
     return (
         <>
-            <span className={'game_leave'}><Link to={'/'}>Leave</Link></span>
+            <span className={'game_leave'}><Link onClick={leave} to={'/'}>Leave</Link></span>
             {
                 lobbyToken ? (
                     <div className={'game'}>
