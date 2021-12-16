@@ -16,7 +16,11 @@
 
   --c-modal-bg: #111;
 
-  --cell-size: 4rem;
+  --cell-size: 2rem;
+
+  @media screen and (min-width: 1000px) {
+    --cell-size: 4rem;
+  }
 
   --mw-container: 800px;
 
