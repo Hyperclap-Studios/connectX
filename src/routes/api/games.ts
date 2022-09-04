@@ -64,7 +64,9 @@ games.post(
 		.withMessage("Name must be between 3 and 16 characters long.")
 		.trim()
 		.escape()
-		.replace(" ", "-"),
+		.customSanitizer((value) => {
+			return value.replaceAll(" ", "-");
+		}),
 	body("password")
 		.isString()
 		.isLength({ max: 64 })
