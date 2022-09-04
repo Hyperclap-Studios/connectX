@@ -150,7 +150,7 @@ class Game {
         this.players.checkAlive();
     }
 
-    public nextTurn(oldUser: User, offset: number = 1, oldIndex?: number): void {
+    public nextTurn(oldUser: User, offset = 1, oldIndex?: number): void {
         const index = oldIndex ? oldIndex : this.players.users.indexOf(oldUser);
         oldUser.gameData.hasTurn = false;
         const next = (index + offset) % this.players.users.length;

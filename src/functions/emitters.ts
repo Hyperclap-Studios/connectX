@@ -17,7 +17,7 @@ const pingGameUsers = () => {
 };
 
 const updateLobbies = (socket?: Socket): boolean => {
-    let target = socket ? socket : io;
+    const target = socket ? socket : io;
     return target.emit('update_lobbies', {
         lobbies: games.getLobbies(),
     });
